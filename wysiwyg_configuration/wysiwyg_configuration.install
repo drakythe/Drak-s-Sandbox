@@ -1,0 +1,149 @@
+<?php
+/**
+ * Implements hook_install.
+ */
+function wysiwyg_configuration_install() {
+  //Deleting the appropriate info out of the 'filter' table.
+  //TABLE_NAME is the name of the table in the db you are working with.
+  //COLUMN_NAME is the name of the column or field inside of the table you are 
+  //looking in.
+  //VALUE is what is in the field you are looking for.
+  
+   // db_delete('TABLE_NAME')
+   //  ->condition('COLUMN_NAME', 'VALUE')
+   //  ->execute().
+   
+  db_delete('filter')
+  //  ->condition('format', 'filtered_html')
+  //  ->condition('module', 'filter')
+    ->execute();
+
+  
+   // db_insert('TABLE_NAME')
+   // ->fields(array(
+   // 'column1' => 'desired_input1'
+   // 'column2' => 'desired_input2'
+   // ));
+
+  db_insert('filter')
+    ->fields(array(
+      'format' => 'filtered_html',
+      'module' => 'image_resize_filter',
+      'name' => 'image_resize_filter',
+      'weight' => '-10',
+      'status' => '1',
+    ))
+  ->execute();
+  db_insert('filter')
+    ->fields(array(
+      'format' => 'filtered_html',
+      'module' => 'htmlpurifier',
+      'name' => 'htmlpurifier_advanced',
+      'weight' => '-9',
+      'status' => '1',
+    ))
+  ->execute();
+  
+//Wysiwyg setup to use ckeditor 
+  $settings = array (
+    'default' => 1,
+    'user_choose' => 0,
+    'show_toggle' => 1,
+    'theme' => 'advanced',
+    'language' => 'en',
+    'buttons' => array (
+      'default' => array (
+        'Bold' => 1,
+        'Italic' => 1,
+        'Underline' => 1,
+        'Strike' => 1,
+        'JustifyLeft' => 1,
+        'JustifyCenter' => 1,
+        'JustifyRight' => 1,
+        'JustifyBlock' => 1,
+        'BulletedList' => 1,
+        'NumberedList' => 1,
+        'Outdent' => 1,
+        'Indent' => 1,
+        'Undo' => 1,
+        'Redo' => 1,
+        'Link' => 1,
+        'Unlink' => 1,
+        'Anchor' => 1,
+        'Image' => 1,
+        'TextColor' => 1,
+        'BGColor' => 1,
+        'Superscript' => 1,
+        'Subscript' => 1,
+        'Blockquote' => 1,
+        'HorizontalRule' => 1,
+        'Cut' => 1,
+        'Copy' => 1,
+        'Paste' => 1,
+        'PasteText' => 1,
+        'RemoveFormat' => 1,
+        'SpecialChar' => 1,
+        'Format' => 1,
+        'Font' => 1,
+        'FontSize' => 1,
+        'Styles' => 1,
+        'Table' => 1,
+        'SelectAll' => 1,
+        'Find' => 1,
+        'Replace' => 1,
+        'SpellChecker' => 1,
+        'Scayt' => 1,
+        'About' => 1,
+      ),
+      'imce' => array (
+        'imce' => 1,
+      ),
+      'drupal' => array (
+        'break' => 1,
+      ),
+    ),
+    'toolbar_loc' => 'top',
+    'toolbar_align' => 'left',
+    'path_loc' => 'bottom',
+    'resizing' => 1,
+    'verify_html' => 1,
+    'preformatted' => 0,
+    'convert_fonts_to_spans' => 1,
+    'remove_linebreaks' => 0,
+    'apply_source_formatting' => 0,
+    'paste_auto_cleanup_on_paste' => 0,
+    'block_formats' => 'p,address,pre,h2,h3,h4,h5,h6,div',
+    'css_setting' => 'none',
+    'css_path' => '',
+    'css_classes' => '',
+  );
+  
+  $settings_serial = serialize($settings);
+  
+  db_delete('wysiwyg')
+    ->condition('format', 'filtered_html')
+    ->execute();
+  db_delete('wysiwyg')
+    ->condition('format', 'full_html')
+    ->execute();
+  db_insert('wysiwyg')
+    ->fields(array(
+        'format' => 'filtered_html',
+        'editor' => 'ckeditor',
+        'settings' => $settings_serial,
+    ))
+  ->execute();
+  db_insert('wysiwyg')
+    ->fields(array(
+        'format' => 'full_html',
+        'editor' => 'ckeditor',
+        'settings' => $settings_serial,
+    ))
+  ->execute();
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function wysiwyg_configuration_uninstall() {
+}
