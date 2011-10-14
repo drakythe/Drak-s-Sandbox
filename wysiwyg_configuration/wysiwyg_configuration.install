@@ -8,14 +8,12 @@ function wysiwyg_configuration_install() {
   //COLUMN_NAME is the name of the column or field inside of the table you are 
   //looking in.
   //VALUE is what is in the field you are looking for.
-  
    // db_delete('TABLE_NAME')
    //  ->condition('COLUMN_NAME', 'VALUE')
    //  ->execute().
    
   db_delete('filter')
-  //  ->condition('format', 'filtered_html')
-  //  ->condition('module', 'filter')
+    ->condition('format', 'filtered_html')
     ->execute();
 
   
@@ -117,15 +115,17 @@ function wysiwyg_configuration_install() {
     'css_path' => '',
     'css_classes' => '',
   );
-  
+  //Serialize the settings for us in the table
   $settings_serial = serialize($settings);
-  
+  //Delete default entries in wysiwyg table so that db_insert works without error.
   db_delete('wysiwyg')
     ->condition('format', 'filtered_html')
     ->execute();
+  //Use a separate db_delete to delete the second entry.
   db_delete('wysiwyg')
     ->condition('format', 'full_html')
     ->execute();
+  //Use db_insert to recreate the entries with correct settings. using the serialized settings so that ckeditor's buttons are pre-selected.
   db_insert('wysiwyg')
     ->fields(array(
         'format' => 'filtered_html',
