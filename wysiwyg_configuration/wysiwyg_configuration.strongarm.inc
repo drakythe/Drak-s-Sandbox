@@ -112,11 +112,6 @@ function wysiwyg_configuration_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'imce_roles_profiles';
   $strongarm->value = array(
-    4 => array(
-      'weight' => '-10',
-      'public_pid' => '1',
-      'private_pid' => '1',
-    ),
     3 => array(
       'weight' => '-10',
       'public_pid' => '1',
